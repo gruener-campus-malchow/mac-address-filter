@@ -1,5 +1,6 @@
-
 <?php
+
+$_SERVER[""];
 
 // Datenbank-Konfiguration
 $db_host = "";
@@ -8,7 +9,9 @@ $db_password = "";
 $db_name = "gcmmac";
 
 // Email-Konfiguration
-$email_from = "From: GCM-Mac <Email hier einfügen>";
+$email_from = "From: GCM-Mac <example@example.com>";
+
+$export_password = "supersecret";
 
 session_start();
 

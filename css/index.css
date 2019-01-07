@@ -1,0 +1,33 @@
+body {
+	
+}
+#login-root {
+	display:none;
+}
+#registration-root {
+	display:none;
+}
+input {
+	float:left;
+}
+.label {
+	float:left;
+}
+.root {
+
+}
+.root > .login-root {
+
+}
+.root > .login-root > .login-btn {
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:8px;
+	padding-right:8px;
+	float:left;
+	background-color:#0d708c;
+	color:#fff;
+}
+.root > .login-root > .back-button {
+
+}
