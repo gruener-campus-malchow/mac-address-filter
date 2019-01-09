@@ -10,3 +10,6 @@ db_name = "gcmmac"
 
 [email]
 email_from = "From: WLAN-Sicherheitsfilter <example@example.com>"
+
+[export]
+export_password = ""
