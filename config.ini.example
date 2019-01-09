@@ -2,3 +2,11 @@
 
 ; To use this file, rename it to "config.ini" and fill in the required values.
 
+[database]
+db_host = ""
+db_user = ""
+db_password = ""
+db_name = "gcmmac"
+
+[email]
+email_from = "From: WLAN-Sicherheitsfilter <example@example.com>"
