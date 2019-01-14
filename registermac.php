@@ -1,8 +1,11 @@
 <?php
 
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+
 require "main.php";
 
-$email = $mac = "";
+$email = $mac = $name = "";
 $emailErr = $macErr = $nameErr = "";
 $emailOK = $macOK = $nameOK = false;
 
@@ -37,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($emailOK === true and $macOK === true and $nameOK === true) {
-        $insertUser = $db_conn->prepare("INSERT INTO users (email) VALUES (?)");
+        $insertUser = $db_conn->prepare("INSERT IGNORE INTO users (email) VALUES (?)");
         $insertUser->bind_param("s", $email);
         $insertUser->execute();
 
@@ -45,11 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $selectUserId->bind_param("s", $email);
         $selectUserId->execute();
         $selectUserId->bind_result($userId);
+        $selectUserId->fetch();
+        $selectUserId->close();
 
         $insertMac = $db_conn->prepare("INSERT INTO macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
         $token = bin2hex(random_bytes(20));
         $insertMac->bind_param("isss", $userId, $mac, $name, $token);
         $insertMac->execute();
+        sendMail($email, $token);
     }
 }
 
@@ -58,6 +64,19 @@ function testInput($data) {
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
+}
+
+function sendMail($email, $token) {
+    $ini = parse_ini_file("config.ini");
+    $mailText = "Sehr geehrte/r Nutzer/in. \n\nJemand hat gerade mit ihrer E-Mail-Adresse ein Gerät im WLAN-Sicherheitsfilter des GCM registriert."
+        ."Falls Sie das waren, klicken Sie bitte auf folgenden Link, um die Registrierung abzuschließen:\n\n"
+        .$ini["domain"]
+        ."/verify.php?token="
+        .$token.
+        "\n\nFalls Sie Sich daran nicht erinnern können, ignorieren Sie diese E-Mail einfach. \n\n"
+        ."Mit freundlichen Grüßen, \n\nIhr CIS & FBI \n(CampusInformationSsystem & Fachbereich Informatik)";
+    $mailBetreff = "WLAN-Sicherheitsfilter - Registrierung bestätigen";
+    mail($email, $mailBetreff, $mailText, $ini["email_from"]);
 }
 
 ?>
