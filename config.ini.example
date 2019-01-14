@@ -13,3 +13,6 @@ email_from = "From: WLAN-Sicherheitsfilter <example@example.com>"
 
 [export]
 export_password = ""
+
+[webserver]
+domain = "example.com/wlan"
