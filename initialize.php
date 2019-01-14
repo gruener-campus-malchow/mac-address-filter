@@ -4,8 +4,7 @@ require "main.php";
 
 $sql_createUserTable = "CREATE TABLE IF NOT EXISTS users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(45) NOT NULL,
-    email VARCHAR(45) NOT NULL,
+    email VARCHAR(45) NOT NULL UNIQUE,
     admin BOOL NOT NULL DEFAULT FALSE
 )";
 
