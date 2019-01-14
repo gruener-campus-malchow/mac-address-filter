@@ -8,11 +8,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $emailErr = "E-Mail erforderlich";
     } else {
         $email = testInput($_POST["email"]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Keine gültige E-Mail-Adresse";
+        }
     }
     if (empty($_POST["mac"])) {
         $macErr = "Geräte-Adresse erforderlich";
     } else {
         $mac = testInput($_POST["mac"]);
+        if (!filter_var($mac, FILTER_VALIDATE_MAC)) {
+            $emailErr = "Keine gültige MAC-Adresse";
+        }
     }
     echo $email;
     echo $mac;
