@@ -1,7 +1,10 @@
 <?php
 
+require "main.php";
+
 $email = $mac = "";
-$emailErr = $macErr = "";
+$emailErr = $macErr = $nameErr = "";
+$emailOK = $macOK = $nameOK = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["email"])) {
@@ -10,18 +13,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = testInput($_POST["email"]);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Keine gültige E-Mail-Adresse";
+        } else {
+            $emailOK = true;
         }
     }
+
     if (empty($_POST["mac"])) {
         $macErr = "Geräte-Adresse erforderlich";
     } else {
         $mac = testInput($_POST["mac"]);
         if (!filter_var($mac, FILTER_VALIDATE_MAC)) {
-            $emailErr = "Keine gültige MAC-Adresse";
+            $macErr = "Keine gültige MAC-Adresse";
+        } else {
+            $macOK = true;
         }
     }
-    echo $email;
-    echo $mac;
+
+    if (empty($_POST["name"])) {
+        $nameErr = "Gerätebeschreibung erforderlich";
+    } else {
+        $name = testInput($_POST["name"]);
+        $nameOK = true;
+    }
+
+    if ($emailOK === true and $macOK === true and $nameOK === true) {
+        $insertUser = $db_conn->prepare("INSERT INTO users (email) VALUES (?)");
+        $insertUser->bind_param("s", $email);
+        $insertUser->execute();
+
+        $selectUserId = $db_conn->prepare("SELECT id FROM users WHERE (email = ?)");
+        $selectUserId->bind_param("s", $email);
+        $selectUserId->execute();
+        $selectUserId->bind_result($userId);
+
+        $insertMac = $db_conn->prepare("INSERT INTO macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
+        $token = bin2hex(random_bytes(20));
+        $insertMac->bind_param("isss", $userId, $mac, $name, $token);
+        $insertMac->execute();
+    }
 }
 
 function testInput($data) {
@@ -52,8 +81,13 @@ function testInput($data) {
         </label><br>
         <label>
             Geräte-Adresse:
-            <input type="text" name="mac">
+            <input type="text" name="mac" maxlength="17">
             <span class="error"><?php echo $macErr;?></span>
+        </label><br>
+        <label>
+            Geräte-Beschreibung:
+            <input type="text" name="name">
+            <span class="error"><?php echo $nameErr;?></span>
         </label><br>
         <input type="submit">
     </form>
