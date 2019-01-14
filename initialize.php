@@ -20,7 +20,7 @@ $sql_macAddressTable = "CREATE TABLE IF NOT EXISTS macs (
     mac VARCHAR(17) NOT NULL,
     deviceName VARCHAR(60),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    token VARCHAR(30),
+    token VARCHAR(60),
     verified BOOL DEFAULT FALSE,
     FOREIGN KEY (userId) REFERENCES users(id)
 )";
