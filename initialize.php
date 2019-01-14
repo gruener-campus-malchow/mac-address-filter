@@ -4,9 +4,7 @@ require "main.php";
 
 $sql_createUserTable = "CREATE TABLE IF NOT EXISTS users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(45) NOT NULL,
-    email VARCHAR(45) NOT NULL,
-    pin INT(4) NOT NULL,
+    email VARCHAR(45) NOT NULL UNIQUE,
     admin BOOL NOT NULL DEFAULT FALSE
 )";
 
@@ -21,6 +19,9 @@ $sql_macAddressTable = "CREATE TABLE IF NOT EXISTS macs (
     userId INT NOT NULL,
     mac VARCHAR(17) NOT NULL,
     deviceName VARCHAR(60),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    token VARCHAR(60),
+    verified BOOL DEFAULT FALSE,
     FOREIGN KEY (userId) REFERENCES users(id)
 )";
 
