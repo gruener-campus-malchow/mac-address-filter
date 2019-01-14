@@ -23,3 +23,21 @@
 </body>
 
 </html>
+
+<?php
+
+$email = $mac = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = testInput($_POST["email"]);
+    $mac = testInput(($_POST["mac"]));
+    echo $email;
+    echo $mac;
+}
+
+function testInput($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
