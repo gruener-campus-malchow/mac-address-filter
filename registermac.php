@@ -76,17 +76,17 @@ function testInput($data) {
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
         <label>
             E-Mail-Adresse:
-            <input type="text" name="email">
+            <input type="text" name="email" value="<?php echo $email?>">
             <span class="error"><?php echo $emailErr;?></span>
         </label><br>
         <label>
             Geräte-Adresse:
-            <input type="text" name="mac" maxlength="17">
+            <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>">
             <span class="error"><?php echo $macErr;?></span>
         </label><br>
         <label>
             Geräte-Beschreibung:
-            <input type="text" name="name">
+            <input type="text" name="name" value="<?php echo $name?>">
             <span class="error"><?php echo $nameErr;?></span>
         </label><br>
         <input type="submit">
