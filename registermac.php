@@ -1,36 +1,19 @@
-<html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <title>WLAN-Sicherheitsfilter</title>
-</head>
-
-<body>
-    <h1>WLAN-Sicherheitsfilter</h1>
-    <h2>Neues Gerät registrieren</h2>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-        <label>
-            E-Mail-Adresse:
-            <input type="text" name="email">
-        </label>
-        <label>
-            Geräte-Adresse:
-            <input type="text" name="mac">
-        </label>
-        <input type="submit">
-    </form>
-
-</body>
-
-</html>
-
 <?php
 
 $email = $mac = "";
+$emailErr = $macErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = testInput($_POST["email"]);
-    $mac = testInput(($_POST["mac"]));
+    if (empty($_POST["email"])) {
+        $emailErr = "E-Mail erforderlich";
+    } else {
+        $email = testInput($_POST["email"]);
+    }
+    if (empty($_POST["mac"])) {
+        $macErr = "Geräte-Adresse erforderlich";
+    } else {
+        $mac = testInput($_POST["mac"]);
+    }
     echo $email;
     echo $mac;
 }
@@ -41,3 +24,34 @@ function testInput($data) {
     $data = htmlspecialchars($data);
     return $data;
 }
+
+?>
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WLAN-Sicherheitsfilter</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+
+<body>
+    <h1>WLAN-Sicherheitsfilter</h1>
+    <h2>Neues Gerät registrieren</h2>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+        <label>
+            E-Mail-Adresse:
+            <input type="text" name="email">
+            <span class="error"><?php echo $emailErr;?></span>
+        </label><br>
+        <label>
+            Geräte-Adresse:
+            <input type="text" name="mac">
+            <span class="error"><?php echo $macErr;?></span>
+        </label><br>
+        <input type="submit">
+    </form>
+
+</body>
+
+</html>
