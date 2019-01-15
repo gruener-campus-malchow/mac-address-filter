@@ -8,6 +8,7 @@ require "main.php";
 $email = $mac = $name = "";
 $emailErr = $macErr = $nameErr = "";
 $emailOK = $macOK = $nameOK = false;
+$successMsg = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["email"])) {
@@ -55,7 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $token = bin2hex(random_bytes(20));
         $insertMac->bind_param("isss", $userId, $mac, $name, $token);
         $insertMac->execute();
-        sendMail($email, $token);
+        if (sendMail($email, $token) === true) {
+            $successMsg = "Bitte bestätigen Sie die Registrierung mithilfe der E-Mail, die Ihnen soeben zugeschickt wurde.";
+        }
     }
 }
 
@@ -76,7 +79,9 @@ function sendMail($email, $token) {
         "\n\nFalls Sie Sich daran nicht erinnern können, ignorieren Sie diese E-Mail einfach. \n\n"
         ."Mit freundlichen Grüßen, \n\nIhr CIS & FBI \n(CampusInformationSsystem & Fachbereich Informatik)";
     $mailBetreff = "WLAN-Sicherheitsfilter - Registrierung bestätigen";
-    mail($email, $mailBetreff, $mailText, $ini["email_from"]);
+    if (mail($email, $mailBetreff, $mailText, $ini["email_from"]) === true) {
+        return true;
+    }
 }
 
 ?>
@@ -110,6 +115,7 @@ function sendMail($email, $token) {
         </label><br>
         <input type="submit">
     </form>
+    <p><?php echo $successMsg;?></p>
 
 </body>
 
