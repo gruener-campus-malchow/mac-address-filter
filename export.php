@@ -2,7 +2,7 @@
 
 require "main.php";
 
-$sql_exportMacs = $db_conn->prepare("SELECT id, mac, deviceName FROM macs");
+$sql_exportMacs = $db_conn->prepare("SELECT id, mac, deviceName FROM macs WHERE (verified=1)");
 $sql_exportMacs->execute();
 
 $macs = $sql_exportMacs->get_result()->fetch_all(MYSQLI_ASSOC);
