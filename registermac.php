@@ -18,7 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Keine gültige E-Mail-Adresse";
         } else {
-            $emailOK = true;
+            if (\strpos($email, $ini["email_suffix"]) !== false) {
+                $emailOK = true;
+            } else {
+                $emailErr = "Keine gültige E-Mail-Adresse";
+            }
         }
     }
 
