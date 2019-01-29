@@ -5,7 +5,8 @@ require "main.php";
 $sql_createUserTable = "CREATE TABLE IF NOT EXISTS users (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(45) NOT NULL UNIQUE,
-    admin BOOL NOT NULL DEFAULT FALSE
+    admin BOOL NOT NULL DEFAULT FALSE,
+    maxMacs INT NOT NULL DEFAULT 3
 )";
 
 if ($db_conn->query($sql_createUserTable) === TRUE) {
