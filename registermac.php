@@ -96,30 +96,35 @@ function sendMail($email, $token) {
     <meta charset="UTF-8">
     <title>WLAN-Sicherheitsfilter</title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="https://cis.gruener-campus-malchow.de/screen_CIS.css">
 </head>
 
 <body>
-    <h1>WLAN-Sicherheitsfilter</h1>
-    <h2>Neues Gerät registrieren</h2>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-        <label>
-            E-Mail-Adresse:
-            <input type="text" name="email" value="<?php echo $email?>">
-            <span class="error"><?php echo $emailErr;?></span>
-        </label><br>
-        <label>
-            Geräte-Adresse:
-            <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>">
-            <span class="error"><?php echo $macErr;?></span>
-        </label><br>
-        <label>
-            Geräte-Beschreibung:
-            <input type="text" name="name" value="<?php echo $name?>">
-            <span class="error"><?php echo $nameErr;?></span>
-        </label><br>
-        <input type="submit">
-    </form>
-    <p><?php echo $successMsg;?></p>
+    <div class="headding">
+        <h1>WLAN-Sicherheitsfilter</h1>
+    </div>
+    <div class="textfield">
+        <h2>Neues Gerät registrieren</h2>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+            <label>
+                E-Mail-Adresse:
+                <input type="text" name="email" value="<?php echo $email?>">
+                <span class="error"><?php echo $emailErr;?></span>
+            </label><br>
+            <label>
+                Geräte-Adresse:
+                <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>">
+                <span class="error"><?php echo $macErr;?></span>
+            </label><br>
+            <label>
+                Geräte-Beschreibung:
+                <input type="text" name="name" value="<?php echo $name?>">
+                <span class="error"><?php echo $nameErr;?></span>
+            </label><br>
+            <input type="submit">
+        </form>
+        <p><?php echo $successMsg;?></p>
+    </div>
 
 </body>
 
