@@ -14,7 +14,7 @@ if ($verify->execute()) {
 }
 
 function sendMail($email, $token) {
-    $ini = parse_ini_file("config.ini");
+    global $ini;
     $mailText = "Sehr geehrte/r Nutzer/in. \n\nJemand hat gerade mit ihrer E-Mail-Adresse ein Gerät im WLAN-Sicherheitsfilter des GCM registriert."
         ."Falls Sie das waren, klicken Sie bitte auf folgenden Link, um die Registrierung abzuschließen:\n\n"
         .$ini["domain"]
