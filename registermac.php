@@ -106,17 +106,17 @@ function sendMail($email, $token) {
     <div class="textfield">
         <h2>Neues Gerät registrieren</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <label>
+            <label class="eingabefeld">
                 E-Mail-Adresse:
                 <input type="text" name="email" value="<?php echo $email?>">
                 <span class="error"><?php echo $emailErr;?></span>
             </label><br>
-            <label>
+            <label class="eingabefeld">
                 Geräte-Adresse:
                 <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>">
                 <span class="error"><?php echo $macErr;?></span>
             </label><br>
-            <label>
+            <label class="eingabefeld">
                 Geräte-Beschreibung:
                 <input type="text" name="name" value="<?php echo $name?>">
                 <span class="error"><?php echo $nameErr;?></span>
