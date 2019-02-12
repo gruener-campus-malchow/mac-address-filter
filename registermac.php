@@ -60,8 +60,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $token = bin2hex(random_bytes(20));
         $insertMac->bind_param("isss", $userId, $mac, $name, $token);
         $insertMac->execute();
-        if (sendMail($email, $token) === true) {
-            $successMsg = "Bitte bestätigen Sie die Registrierung mithilfe der E-Mail, die Ihnen soeben zugeschickt wurde.";
+        if (checkForMaxMacs($email) === true) {
+            if (sendMail($email, $token) === true) {
+                $successMsg = "Bitte bestätigen Sie die Registrierung mithilfe der E-Mail, die Ihnen soeben zugeschickt wurde.";
+            }
+        } else {
+            $successMsg = "Sie haben bereits die maximale Anzahl an Geräten registriert. Falls Sie ein höheres Limit benötigen, wenden Sie Sich bitte an den Fachbereich Informatik.";
         }
     }
 }
@@ -90,6 +94,21 @@ function sendMail($email, $token) {
     $sendSMTPMail->Body = $mailText;
     $sendSMTPMail->send();
     return true;
+}
+
+function checkForMaxMacs($email) {
+    global $db_conn;
+    global $p;
+    $sql_getMacAmount = $db_conn->prepare("SELECT ".$p."_users.maxMacs, COUNT(".$p."_macs.id) FROM ".$p."_users INNER JOIN ".$p."_macs ON ".$p."_macs.userId = ".$p."_users.id WHERE (".$p."_users.email = ? and ".$p."_macs.verified = 1)");
+    $sql_getMacAmount->bind_param("s", $email);
+    $sql_getMacAmount->execute();
+    $sql_getMacAmount->bind_result($maxMacs, $macCount);
+    $sql_getMacAmount->fetch();
+    if ($macCount < $maxMacs) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 ?>
