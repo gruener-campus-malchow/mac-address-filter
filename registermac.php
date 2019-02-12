@@ -45,18 +45,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($emailOK === true and $macOK === true and $nameOK === true) {
-        $insertUser = $db_conn->prepare("INSERT IGNORE INTO users (email) VALUES (?)");
+        $insertUser = $db_conn->prepare("INSERT IGNORE INTO ".$p."_users (email) VALUES (?)");
         $insertUser->bind_param("s", $email);
         $insertUser->execute();
 
-        $selectUserId = $db_conn->prepare("SELECT id FROM users WHERE (email = ?)");
+        $selectUserId = $db_conn->prepare("SELECT id FROM ".$p."_users WHERE (email = ?)");
         $selectUserId->bind_param("s", $email);
         $selectUserId->execute();
         $selectUserId->bind_result($userId);
         $selectUserId->fetch();
         $selectUserId->close();
 
-        $insertMac = $db_conn->prepare("INSERT INTO macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
+        $insertMac = $db_conn->prepare("INSERT INTO ".$p."_macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
         $token = bin2hex(random_bytes(20));
         $insertMac->bind_param("isss", $userId, $mac, $name, $token);
         $insertMac->execute();

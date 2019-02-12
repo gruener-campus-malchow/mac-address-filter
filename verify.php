@@ -4,7 +4,7 @@ require "main.php";
 
 $urlToken = $_GET["token"];
 
-$verify = $db_conn->prepare("UPDATE macs SET verified=1 WHERE (token = ?)");
+$verify = $db_conn->prepare("UPDATE ".$p."_macs SET verified=1 WHERE (token = ?)");
 $verify->bind_param("s", $urlToken);
 if ($verify->execute()) {
     sendMail($urlToken);
@@ -16,23 +16,24 @@ if ($verify->execute()) {
 function sendMail($token) {
     global $ini;
     global $db_conn;
-    $selectData = $db_conn->prepare("SELECT users.email, users.maxMacs, macs.mac, macs.deviceName, users.id FROM users
-        INNER JOIN macs ON macs.userId = users.id
-        WHERE (macs.token = ? AND macs.verified = 1)");
+    global $p;
+    $selectData = $db_conn->prepare("SELECT ".$p."_users.email, ".$p."_users.maxMacs, ".$p."_macs.mac, ".$p."_macs.deviceName, ".$p."_users.id FROM ".$p."_users
+        INNER JOIN ".$p."_macs ON ".$p."_macs.userId = ".$p."_users.id
+        WHERE (".$p."_macs.token = ? AND ".$p."_macs.verified = 1)");
     $selectData->bind_param("s", $token);
     $selectData->execute();
     $selectData->bind_result($email, $maxMacs, $mac, $deviceName, $userId);
     $selectData->fetch();
     $selectData->close();
 
-    $selectMacCount = $db_conn->prepare("SELECT COUNT(id) FROM macs WHERE (userId=? AND verified=1)");
+    $selectMacCount = $db_conn->prepare("SELECT COUNT(id) FROM ".$p."_macs WHERE (userId=? AND verified=1)");
     $selectMacCount->bind_param("i", $userId);
     $selectMacCount->execute();
     $selectMacCount->bind_result($registeredMacsCount);
     $selectMacCount->fetch();
     $selectMacCount->close();
 
-    $selectMacArray = $db_conn->prepare("SELECT deviceName, mac, token FROM macs WHERE (userId = ? AND verified = 1) ORDER BY created_at ASC");
+    $selectMacArray = $db_conn->prepare("SELECT deviceName, mac, token FROM ".$p."_macs WHERE (userId = ? AND verified = 1) ORDER BY created_at ASC");
     $selectMacArray->bind_param("i", $userId);
     $selectMacArray->execute();
     $registeredMacs = $selectMacArray->get_result()->fetch_all(MYSQLI_ASSOC);

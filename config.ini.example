@@ -6,7 +6,8 @@
 db_host = ""
 db_user = ""
 db_password = ""
-db_name = "gcmmac"
+db_name = ""
+db_prefix = "gcmmac"
 
 [email]
 email_from = "From: WLAN-Sicherheitsfilter <example@example.com>"
