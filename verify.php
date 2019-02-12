@@ -17,6 +17,7 @@ function sendMail($token) {
     global $ini;
     global $db_conn;
     global $p;
+    global $sendSMTPMail;
     $selectData = $db_conn->prepare("SELECT ".$p."_users.email, ".$p."_users.maxMacs, ".$p."_macs.mac, ".$p."_macs.deviceName, ".$p."_users.id FROM ".$p."_users
         INNER JOIN ".$p."_macs ON ".$p."_macs.userId = ".$p."_users.id
         WHERE (".$p."_macs.token = ? AND ".$p."_macs.verified = 1)");
@@ -52,7 +53,9 @@ function sendMail($token) {
         ."Da in dieser Mail viele nützliche Links/URLs vorhanden sind, lohnt es sich, diese aufzuheben.\n\n\n"
         ."Mit freundlichen Grüßen,\n\nIhr CIS & FBI\n(CampusInformationSsystem & Fachbereich Informatik)";
     $mailBetreff = "WLAN-Sicherheitsfilter - Registrierung bestätigt";
-    if (mail($email, $mailBetreff, $mailText, $ini["email_from"]) === true) {
-        return true;
-    }
+
+    $sendSMTPMail->Subject = $mailBetreff;
+    $sendSMTPMail->addAddress($email);
+    $sendSMTPMail->Body = $mailText;
+    $sendSMTPMail->send();
 }

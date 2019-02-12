@@ -75,6 +75,7 @@ function testInput($data) {
 
 function sendMail($email, $token) {
     global $ini;
+    global $sendSMTPMail;
     $mailText = "Sehr geehrte/r Nutzer/in. \n\nJemand hat gerade mit ihrer E-Mail-Adresse ein Gerät im WLAN-Sicherheitsfilter des GCM registriert. "
         ."Falls Sie das waren, klicken Sie bitte auf folgenden Link, um die Registrierung abzuschließen:\n\n"
         .$ini["domain"]
@@ -83,9 +84,12 @@ function sendMail($email, $token) {
         "\n\nFalls Sie Sich daran nicht erinnern können, ignorieren Sie diese E-Mail einfach. \n\n"
         ."Mit freundlichen Grüßen, \n\nIhr CIS & FBI \n(CampusInformationSsystem & Fachbereich Informatik)";
     $mailBetreff = "WLAN-Sicherheitsfilter - Registrierung bestätigen";
-    if (mail($email, $mailBetreff, $mailText, $ini["email_from"]) === true) {
-        return true;
-    }
+
+    $sendSMTPMail->Subject = $mailBetreff;
+    $sendSMTPMail->addAddress($email);
+    $sendSMTPMail->Body = $mailText;
+    $sendSMTPMail->send();
+    return true;
 }
 
 ?>

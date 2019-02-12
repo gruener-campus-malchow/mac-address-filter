@@ -10,7 +10,8 @@ db_name = ""
 db_prefix = "gcmmac"
 
 [email]
-email_from = "From: WLAN-Sicherheitsfilter <example@example.com>"
+email_from = "example@example.com"
+email_name = "WLAN-Sicherheitsfilter"
 email_suffix = "@example.com"
 
 [export]
@@ -18,3 +19,10 @@ export_password = ""
 
 [webserver]
 domain = "https://example.com/wlan"
+
+[smtp]
+smtp_host = "smtp1.example.com;smtp2.example.com"
+smtp_username = "user@example.com"
+smtp_password = "secret"
+smtp_security = "tls"
+smtp_port = "587"
