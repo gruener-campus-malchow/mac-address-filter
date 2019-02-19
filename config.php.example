@@ -1,0 +1,32 @@
+<?php
+
+//Example configuration file for the MAC-filter
+
+//; To use this file, rename it to "config.php" and fill in the required values.
+$config=array();
+
+//['database']
+$config['db_host'] = "";
+$config['db_user'] = "";
+$config['db_password'] = "";
+$config['db_name'] = "";
+$config['db_prefix'] = "gcmmac";
+
+//['email']
+$config['email_from'] = "example@example.com";
+$config['email_name'] = "WLAN-Sicherheitsfilter";
+$config['email_suffix'] = "@example.com";
+
+//['export']
+$config['export_password'] = "";
+
+//['webserver']
+$config['domain'] = "https://example.com/wlan";
+
+//['smtp']
+$config['smtp_host'] = "smtp1.example.com;smtp2.example.com";
+$config['smtp_username'] = "user@example.com";
+$config['smtp_password'] = "secret";
+$config['smtp_security'] = "tls";
+$config['smtp_port'] = "587";
+?>

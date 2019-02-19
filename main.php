@@ -7,7 +7,9 @@ require "mail/Exception.php";
 require "mail/PHPMailer.php";
 require "mail/SMTP.php";
 
-$ini = parse_ini_file("config.ini");
+require "config.php";
+$ini = $config;
+
 $p = $ini["db_prefix"];
 
 $db_conn = new mysqli($ini["db_host"], $ini["db_user"], $ini["db_password"], $ini["db_name"]);
