@@ -104,7 +104,7 @@ function checkForMaxMacs($email) {
     $sql_getMacAmount->execute();
     $sql_getMacAmount->bind_result($maxMacs, $macCount);
     $sql_getMacAmount->fetch();
-    if ($macCount < $maxMacs) {
+    if ($macCount < $maxMacs or $maxMacs === null) {
         return true;
     } else {
         return false;
