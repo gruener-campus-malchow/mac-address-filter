@@ -131,17 +131,17 @@ function checkForMaxMacs($email) {
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
             <label class="eingabefeld">
                 E-Mail-Adresse:
-                <input type="text" name="email" value="<?php echo $email?>">
+                <input type="text" name="email" value="<?php echo $email?>" required>
                 <span class="error"><?php echo $emailErr;?></span>
             </label><br>
             <label class="eingabefeld">
                 Geräte-Adresse:
-                <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>">
+                <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>" required>
                 <span class="error"><?php echo $macErr;?></span>
             </label><br>
             <label class="eingabefeld">
                 Geräte-Beschreibung:
-                <input type="text" name="name" value="<?php echo $name?>">
+                <input type="text" name="name" value="<?php echo $name?>" required>
                 <span class="error"><?php echo $nameErr;?></span>
             </label><br>
             <input type="submit">
