@@ -13,6 +13,7 @@ if ($db_conn->query($sql_createUserTable) === TRUE) {
     echo "User-Tabelle erfolgreich erstellt<br>";
 } else {
     echo "Erstellen der User-Tabelle fehlgeschlagen: " . $db_conn->error . "<br>";
+    logger("db", $db_conn->error);
 }
 
 $sql_macAddressTable = "CREATE TABLE IF NOT EXISTS ".$p."_macs (
@@ -30,7 +31,21 @@ if ($db_conn->query($sql_macAddressTable) === TRUE) {
     echo "MAC-Tabelle erfolgreich erstellt<br>";
 } else {
     echo "Erstellen der MAC-Tabelle fehlgeschlagen: " . $db_conn->error . "<br>";
+    logger("db", $db_conn->error);
+}
+
+$sql_logTable = "CREATE TABLE IF NOT EXISTS ".$p."_logs (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    category VARCHAR(20),
+    text TEXT
+)";
+
+if ($db_conn->query($sql_logTable) === TRUE) {
+    echo "Log-Tabelle erfolgreich erstellt<br>";
+} else {
+    echo "Erstellen der Log-Tabelle fehlgeschlagen: " . $db_conn->error . "<br>";
+    logger("db", $db_conn->error);
 }
 
 $db_conn->close();
-session_destroy();

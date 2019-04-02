@@ -45,24 +45,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($emailOK === true and $macOK === true and $nameOK === true) {
-        $insertUser = $db_conn->prepare("INSERT IGNORE INTO ".$p."_users (email) VALUES (?)");
-        $insertUser->bind_param("s", $email);
-        $insertUser->execute();
-
-        $selectUserId = $db_conn->prepare("SELECT id FROM ".$p."_users WHERE (email = ?)");
-        $selectUserId->bind_param("s", $email);
-        $selectUserId->execute();
-        $selectUserId->bind_result($userId);
-        $selectUserId->fetch();
-        $selectUserId->close();
-
-        $insertMac = $db_conn->prepare("INSERT INTO ".$p."_macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
-        $token = bin2hex(random_bytes(20));
-        $insertMac->bind_param("isss", $userId, $mac, $name, $token);
-        $insertMac->execute();
         if (checkForMaxMacs($email) === true) {
+            $insertUser = $db_conn->prepare("INSERT IGNORE INTO ".$p."_users (email) VALUES (?)");
+            $insertUser->bind_param("s", $email);
+            $insertUser->execute();
+
+            $selectUserId = $db_conn->prepare("SELECT id FROM ".$p."_users WHERE (email = ?)");
+            $selectUserId->bind_param("s", $email);
+            $selectUserId->execute();
+            $selectUserId->bind_result($userId);
+            $selectUserId->fetch();
+            $selectUserId->close();
+
+            $insertMac = $db_conn->prepare("INSERT INTO ".$p."_macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
+            try {
+                $token = bin2hex(random_bytes(20));
+            } catch (Exception $e) {
+                $successMsg = "Unser Zufallsgenerator hat nicht funktioniert. Probieren Sie es bitte erneut. Falls es weiterhin nicht funktionieren sollte, wenden Sie Sich bitte an den Fachbereich Informatik";
+            }
+            $insertMac->bind_param("isss", $userId, $mac, $name, $token);
+            $insertMac->execute();
             if (sendMail($email, $token) === true) {
                 $successMsg = "Bitte bestätigen Sie die Registrierung mithilfe der E-Mail, die Ihnen soeben zugeschickt wurde.";
+                logger("registration", "MAC " . $mac . " erfolgreich registriert");
+            } else {
+                $successMsg = "Etwas ging beim Senden der Bestätigungsmail schief. Probieren Sie es bitte erneut. Falls es weiterhin nicht funktionieren sollte, wenden Sie Sich bitte an den Fachbereich Informatik";
             }
         } else {
             $successMsg = "Sie haben bereits die maximale Anzahl an Geräten registriert. Falls Sie ein höheres Limit benötigen, wenden Sie Sich bitte an den Fachbereich Informatik.";
@@ -92,8 +99,13 @@ function sendMail($email, $token) {
     $sendSMTPMail->Subject = $mailBetreff;
     $sendSMTPMail->addAddress($email);
     $sendSMTPMail->Body = $mailText;
-    $sendSMTPMail->send();
-    return true;
+    try {
+        $sendSMTPMail->send();
+        return true;
+    } catch (\PHPMailer\PHPMailer\Exception $e) {
+        logger("mail", "Fehler beim Senden einer Bestätigungsmail an " . $email . ": " . $e);
+        return false;
+    }
 }
 
 function checkForMaxMacs($email) {

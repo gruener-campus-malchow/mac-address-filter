@@ -57,5 +57,9 @@ function sendMail($token) {
     $sendSMTPMail->Subject = $mailBetreff;
     $sendSMTPMail->addAddress($email);
     $sendSMTPMail->Body = $mailText;
-    $sendSMTPMail->send();
+    try {
+        $sendSMTPMail->send();
+    } catch (\PHPMailer\PHPMailer\Exception $e) {
+        logger("mail", $e);
+    }
 }
