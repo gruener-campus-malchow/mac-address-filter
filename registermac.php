@@ -46,18 +46,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($emailOK === true and $macOK === true and $nameOK === true) {
         if (checkForMaxMacs($email) === true) {
-            $insertUser = $db_conn->prepare("INSERT IGNORE INTO ".$p."_users (email) VALUES (?)");
+            $insertUser = $db_conn->prepare("INSERT IGNORE INTO " . $p . "_users (email) VALUES (?)");
             $insertUser->bind_param("s", $email);
             $insertUser->execute();
 
-            $selectUserId = $db_conn->prepare("SELECT id FROM ".$p."_users WHERE (email = ?)");
+            $selectUserId = $db_conn->prepare("SELECT id FROM " . $p . "_users WHERE (email = ?)");
             $selectUserId->bind_param("s", $email);
             $selectUserId->execute();
             $selectUserId->bind_result($userId);
             $selectUserId->fetch();
             $selectUserId->close();
 
-            $insertMac = $db_conn->prepare("INSERT INTO ".$p."_macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
+            $insertMac = $db_conn->prepare("INSERT INTO " . $p . "_macs (userId, mac, deviceName, token) VALUES (?,?,?,?)");
             try {
                 $token = bin2hex(random_bytes(20));
             } catch (Exception $e) {
@@ -77,41 +77,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-function testInput($data) {
+function testInput($data)
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
 }
 
-function sendMail($email, $token) {
+function sendMail($email, $token)
+{
     global $ini;
-    global $sendSMTPMail;
+    if ($ini["email_mode"] === "smtp") {
+        global $sendSMTPMail;
+    } elseif ($ini["email_mode"] === "sendmail") {
+        global $emailFrom;
+    }
+
     $mailText = "Sehr geehrte/r Nutzer/in. \n\nJemand hat gerade mit ihrer E-Mail-Adresse ein Gerät im WLAN-Sicherheitsfilter des GCM registriert. "
-        ."Falls Sie das waren, klicken Sie bitte auf folgenden Link, um die Registrierung abzuschließen:\n\n"
-        .$ini["domain"]
-        ."/verify.php?token="
-        .$token.
+        . "Falls Sie das waren, klicken Sie bitte auf folgenden Link, um die Registrierung abzuschließen:\n\n"
+        . $ini["domain"]
+        . "/verify.php?token="
+        . $token .
         "\n\nFalls Sie Sich daran nicht erinnern können, ignorieren Sie diese E-Mail einfach. \n\n"
-        ."Mit freundlichen Grüßen, \n\nIhr CIS & FBI \n(CampusInformationSsystem & Fachbereich Informatik)";
+        . "Mit freundlichen Grüßen, \n\nIhr CIS & FBI \n(CampusInformationSsystem & Fachbereich Informatik)";
     $mailBetreff = "WLAN-Sicherheitsfilter - Registrierung bestätigen";
 
-    $sendSMTPMail->Subject = $mailBetreff;
-    $sendSMTPMail->addAddress($email);
-    $sendSMTPMail->Body = $mailText;
-    try {
-        $sendSMTPMail->send();
-        return true;
-    } catch (\PHPMailer\PHPMailer\Exception $e) {
-        logger("mail", "Fehler beim Senden einer Bestätigungsmail an " . $email . ": " . $e);
-        return false;
+    if ($ini["email_mode"] === "smtp") {
+        $sendSMTPMail->Subject = $mailBetreff;
+        $sendSMTPMail->addAddress($email);
+        $sendSMTPMail->Body = $mailText;
+        try {
+            $sendSMTPMail->send();
+            return true;
+        } catch (\PHPMailer\PHPMailer\Exception $e) {
+            logger("mail", "Fehler beim Senden einer Bestätigungsmail an " . $email . ": " . $e);
+            return false;
+        }
+    } elseif ($ini["email_mode"] === "sendmail") {
+        try {
+            mail($email, $mailBetreff, $mailText, $emailFrom);
+            return true;
+        } catch (Exception $e) {
+            logger("mail", "Fehler beim Senden einer Bestätigungsmail an " . $email . ": " . $e);
+            return false;
+        }
     }
 }
 
-function checkForMaxMacs($email) {
+function checkForMaxMacs($email)
+{
     global $db_conn;
     global $p;
-    $sql_getMacAmount = $db_conn->prepare("SELECT ".$p."_users.maxMacs, COUNT(".$p."_macs.id) FROM ".$p."_users INNER JOIN ".$p."_macs ON ".$p."_macs.userId = ".$p."_users.id WHERE (".$p."_users.email = ? and ".$p."_macs.verified = 1)");
+    $sql_getMacAmount = $db_conn->prepare("SELECT " . $p . "_users.maxMacs, COUNT(" . $p . "_macs.id) FROM " . $p . "_users INNER JOIN " . $p . "_macs ON " . $p . "_macs.userId = " . $p . "_users.id WHERE (" . $p . "_users.email = ? and " . $p . "_macs.verified = 1)");
     $sql_getMacAmount->bind_param("s", $email);
     $sql_getMacAmount->execute();
     $sql_getMacAmount->bind_result($maxMacs, $macCount);
@@ -135,31 +153,31 @@ function checkForMaxMacs($email) {
 </head>
 
 <body>
-    <div class="headding">
-        <h1>WLAN-Sicherheitsfilter</h1>
-    </div>
-    <div class="textfield">
-        <h2>Neues Gerät registrieren</h2>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <label class="eingabefeld">
-                E-Mail-Adresse:
-                <input type="text" name="email" value="<?php echo $email?>" required>
-                <span class="error"><?php echo $emailErr;?></span>
-            </label><br>
-            <label class="eingabefeld">
-                Geräte-Adresse:
-                <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>" required>
-                <span class="error"><?php echo $macErr;?></span>
-            </label><br>
-            <label class="eingabefeld">
-                Geräte-Beschreibung:
-                <input type="text" name="name" value="<?php echo $name?>" required>
-                <span class="error"><?php echo $nameErr;?></span>
-            </label><br>
-            <input type="submit">
-        </form>
-        <p><?php echo $successMsg;?></p>
-    </div>
+<div class="headding">
+    <h1>WLAN-Sicherheitsfilter</h1>
+</div>
+<div class="textfield">
+    <h2>Neues Gerät registrieren</h2>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <label class="eingabefeld">
+            E-Mail-Adresse:
+            <input type="text" name="email" value="<?php echo $email ?>" required>
+            <span class="error"><?php echo $emailErr; ?></span>
+        </label><br>
+        <label class="eingabefeld">
+            Geräte-Adresse:
+            <input type="text" name="mac" maxlength="17" value="<?php echo $mac ?>" required>
+            <span class="error"><?php echo $macErr; ?></span>
+        </label><br>
+        <label class="eingabefeld">
+            Geräte-Beschreibung:
+            <input type="text" name="name" value="<?php echo $name ?>" required>
+            <span class="error"><?php echo $nameErr; ?></span>
+        </label><br>
+        <input type="submit">
+    </form>
+    <p><?php echo $successMsg; ?></p>
+</div>
 
 </body>
 

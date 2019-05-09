@@ -16,6 +16,7 @@ $config['db_prefix'] = "gcmmac";
 $config['email_from'] = "example@example.com";
 $config['email_name'] = "WLAN-Sicherheitsfilter";
 $config['email_suffix'] = "@example.com";
+$config['email_mode'] = 'sendmail'; //'sendmail' or 'smtp'
 
 // Logging
 
