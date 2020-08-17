@@ -18,10 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $emailErr = "Keine gültige E-Mail-Adresse";
         } else {
-            if (\strpos($email, $ini["email_suffix"]) !== false) {
+            $provider ='@'.explode('@',$email)[1];
+            if (in_array($provider, $ini["email_suffix"])) {
                 $emailOK = true;
             } else {
-                $emailErr = "Keine gültige E-Mail-Adresse";
+                $emailErr .= "Kein gültiger Provider. Bitte bei der Schule melden.";
             }
         }
     }
@@ -142,42 +143,106 @@ function checkForMaxMacs($email)
 }
 
 ?>
-
+<!DOCTYPE html>
 <html lang="de">
 
 <head>
     <meta charset="UTF-8">
     <title>WLAN-Sicherheitsfilter</title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
-    <link rel="stylesheet" type="text/css" href="https://cis.gruener-campus-malchow.de/screen_CIS.css">
+    <link rel="stylesheet" type="text/css" href="https://gcm.schule/screen_CIS.css">
 </head>
 
 <body>
-<div class="headding">
-    <h1>WLAN-Sicherheitsfilter</h1>
-</div>
-<div class="textfield">
-    <h2>Neues Gerät registrieren</h2>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <label class="eingabefeld">
-            E-Mail-Adresse:
-            <input type="text" name="email" value="<?php echo $email ?>" required>
-            <span class="error"><?php echo $emailErr; ?></span>
-        </label><br>
-        <label class="eingabefeld">
-            Geräte-Adresse:
-            <input type="text" name="mac" maxlength="17" value="<?php echo $mac ?>" required>
-            <span class="error"><?php echo $macErr; ?></span>
-        </label><br>
-        <label class="eingabefeld">
-            Geräte-Beschreibung:
-            <input type="text" name="name" value="<?php echo $name ?>" required>
-            <span class="error"><?php echo $nameErr; ?></span>
-        </label><br>
-        <input type="submit">
-    </form>
-    <p><?php echo $successMsg; ?></p>
-</div>
+        <div class="headder">
+            <div class="image">
+                <a href="https://gcm.schule" class="invisible_link">
+                    <img class="logo" src="https://gcm.schule/logo_gcm_progressbar.gif" alt="logo_gcm">
+                </a>
+            </div>
+            <div class="headding">
+                Campus Informations System
+            </div>
+		    <h2>WLAN-Sicherheitsfilter</h2>
+        </div>
+    <div class ="outer_wrapper">
+        <div class="textfield">
+            <p>
+            Dieser Service wurde an unserer Schule von <a class="std" href="https://github.com/sn0wmanmj" target="_blank">Moritz Jannasch</a> entwickelt und von Alexander Baldauf weiterentwickelt und auf Sicherheitsaspekte hin untersucht.  
+            </p>
+            <p>
+    Es können nur Kolleginnen und Kollegen ihre Geräte registrieren, die eine Dienstmailadresse haben. Über diesen Mail-Account laufen unsere Sicherheitsbestätigungen, damit nur Mitarbeiterinnen und Mitarbeiter des Campus ihre Geräte freischalten können. Für die Benutzung muss man außerdem die Zugangsdaten des WLANs (Wifi) kennen.
+            </p>
+        </div>
+<?php
+if($ini["message"] != "NONE")
+{
+    echo ' <div class="warning">'.$ini["message"].'</div>';
+}
+?>
+        <div class="textfield">
+
+                <h3><p>Neues Gerät registrieren</p></h3>
+
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                <p>          
+                    <label class="eingabefeld">
+                    E-Mail-Adresse:
+                    <input type="text" name="email" value="<?php echo $email?>">
+                    <span class="error"><?php echo $emailErr;?></span>
+                    </label>
+                </p>
+                <p>
+                    <label class="eingabefeld" data-tooltip="I am a tooltip">
+                    Geräte-Adresse:
+                    <input type="text" name="mac" maxlength="17" value="<?php echo $mac?>">
+                        <div class="infoschalter">Hilfe einblenden
+                            <div class="infotext">
+                                
+		                    <h1>Geräte-Adresse</h1>
+		                    <p>
+			                    Die Geräte-Adresse ist eine zwölfstellige Hexadezimal-Nummer, die durch Doppelpunkte in sechs Blöcke getrennt wird. Sie gehört zur Hardware, also der WLAN-Karte oder der LAN-Karte. Sie wird eigentlich <a class="std" href="https://de.wikipedia.org/wiki/MAC-Adresse" target="_blank">MAC-Adresse</a> oder auch physikalische Adresse genannt. Mittels dieser kann das Netwerkgerät des Computers mit dem Netzwerk bekannt gemacht werden, ähnlich dem Nummernschild eines Autos. So können unbekannte Computer vom Netzwerk des GCM blockiert werden. Deshalb heißt das System WLAN-Sicherheitsfilter.<br>
+Meist sieht diese beispielsweise so aus: e1:34:74:e2:d1:d9, manchmal auch so: e1-34-74-e2-d1-d9
+		                    </p>
+		                    <h2>Windows</h2>
+		                    <p>
+			                    In den Details der Netzwerkeinstellungen findet man die Adresse in den Details unter physikalische Adresse.
+		                    </p>
+
+		                    <h2>Android</h2>
+		                    <p>
+			                    Bitte suchen unter: Einstellungen => System => Über das Telefon => Status => WLAN-MAC-Adresse
+		                    </p>
+
+		                    <h2>iOS</h2>
+		                    <p>
+			                    In den Details der Netzwerkeinstellungen findet man die Daten unter physikalische Adresse.
+		                    </p>
+		                    <h2>Linux (Debian & Co)</h2>
+		                    <p>
+                                Am Schnellsten erfährt man die Mac-Adresse im Terminal mit dem Befehl "ifconfig" und findet sie unter "ether..."
+		                    </p>
+
+                            </div>
+                    </div>
+                    <span class="error"><?php echo $macErr;?></span>
+                    </label>
+                </p>
+                <p>
+                    <label class="eingabefeld">
+                    Geräte-Beschreibung damit man seine Geräte auseinander halten kann (z.B. Laptop, Fon, Tablet, o.ä.):
+                    <input type="text" name="name" value="<?php echo $name?>">
+                    <span class="error"><?php echo $nameErr;?></span>
+                    </label>
+                </p>
+                <p>
+                    <input type="submit">
+                </p>
+            </form>
+            <p><?php echo $successMsg;?></p>
+
+        </div>
+    </div>
 
 </body>
 

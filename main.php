@@ -53,5 +53,5 @@ if ($ini["email_mode"] === "smtp") {
     }
 } elseif ($ini["email_mode"] === "sendmail") {
     $emailFrom = "From: " . $ini["email_name"] . " <" . $ini["email_from"] . ">";
-    echo $emailFrom;
+    //echo $emailFrom;
 }

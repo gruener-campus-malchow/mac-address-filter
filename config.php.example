@@ -1,22 +1,41 @@
 <?php
 
-// Example configuration file for the MAC-filter
+//Example configuration file for the MAC-filter
 
-// To use this file, rename it to "config.php" and fill in the required values.
+//; To use this file, rename it to "config.ini" and fill in the required values. Replace the Wildcards...
+
 $config=array();
 
-// Database
-$config['db_host'] = "";
-$config['db_user'] = "";
-$config['db_password'] = "";
-$config['db_name'] = "";
-$config['db_prefix'] = "gcmmac";
+//['database']
+$config['db_host'] = "*******";
+$config['db_user'] = "*******";
+$config['db_password'] = '*******';
+$config['db_name'] = "*******";
+$config['db_prefix'] = "*******";
 
-// Email
-$config['email_from'] = "example@example.com";
-$config['email_name'] = "WLAN-Sicherheitsfilter";
-$config['email_suffix'] = "@example.com";
+//['email']
+$config['email_from'] = "*******";
+$config['email_name'] = "Wifi/WLAN Sicherheitsfilter";
+$config['email_suffix'] = array("@example1.de","@example2.de","@example3.de");
 $config['email_mode'] = 'sendmail'; //'sendmail' or 'smtp'
+
+//['export']
+$config['export_password'] = "*******";
+
+//['webserver']
+$config['domain'] = "*******";
+
+//['smtp']
+$config['smtp_host'] = "*******";
+$config['smtp_username'] = "*******";
+$config['smtp_password'] = "*******";
+$config['smtp_security'] = "ssl";
+$config['smtp_port'] = "465";
+
+//$config['message'] = "NONE";
+
+$config['message'] = "
+<p>Derzeit befindet sich das System in der Testphase. Es können Geräte registriert werden und das System wird im Laufe der Tests aktiviert und deaktiviert werden. Nach den Tests wird die Verwendung verpflichtend sein.</p>";
 
 // Logging
 
@@ -27,16 +46,5 @@ DEBUG - logs basically everything */
 
 $config['loglevel'] = "NONE";
 
-// Export
-$config['export_password'] = "";
 
-// Webserver
-$config['domain'] = "https://example.com/wlan";
-
-// SMTP
-$config['smtp_host'] = "smtp1.example.com;smtp2.example.com";
-$config['smtp_username'] = "user@example.com";
-$config['smtp_password'] = "secret";
-$config['smtp_security'] = "tls";
-$config['smtp_port'] = "587";
 ?>

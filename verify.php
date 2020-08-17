@@ -1,5 +1,50 @@
 <?php
 
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+?>
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WLAN-Sicherheitsfilter</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="https://cis.gruener-campus-malchow.de/screen_CIS.css">
+</head>
+
+<body>
+        <div class="headder">
+            <div class="image">
+                <a href="https://cis.gruener-campus-malchow.de" class="invisible_link">
+                    <img class="logo" src="https://cis.gruener-campus-malchow.de/logo_gcm_progressbar.gif" alt="logo_gcm">
+                </a>
+            </div>
+            <div class="headding">
+                Campus Informations System
+            </div>
+		    <h2>WLAN-Sicherheitsfilter</h2>
+        </div>
+    <div class ="outer_wrapper">
+        <div class="textfield">
+            <p>
+            Dieser Service wurde an unserer Schule von <a class="std" href="https://github.com/sn0wmanmj" target="_blank">Moritz Jannasch</a> entwickelt und von Alexander Baldauf auf Sicherheitsaspekte hin untersucht.  
+            </p>
+            <p>
+    Es können nur Kolleginnen und Kollegen ihre Geräte registrieren, die eine Dienstmailadresse haben. Über diesen Mail-Account laufen unsere Sicherheitsbestätigungen, damit nur Mitarbeiterinnen und Mitarbeiter des Campus ihre Geräte freischalten können.
+            </p>
+        </div>
+       
+        <div class="textfield">
+
+                <h3><p>Feedback</p></h3>
+
+
+
+
+
+<?php
+
 require "main.php";
 
 $urlToken = $_GET["token"];
@@ -8,10 +53,16 @@ $verify = $db_conn->prepare("UPDATE " . $p . "_macs SET verified=1 WHERE (token 
 $verify->bind_param("s", $urlToken);
 if ($verify->execute()) {
     sendMail($urlToken);
-    echo "Geräte-Adresse erfolgreich verifiziert";
+    echo "<p>Die Geräte-Adresse wurde erfolgreich verifiziert. Sie können nun das Netzwerk benutzen.</p>";
 } else {
-    echo "Etwas ist schiefgegangen";
+    echo "<p>Etwas ist schiefgegangen. Wiederholen Sie den Vorgang und lesen Sie bitte die Hilfe. Falls der Fehler weiterhin auftritt, kontaktieren Sie bitte den Administrator.</p>";
 }
+
+if($ini["message"] != "NONE")
+{
+    echo ' <div class="warning">'.$ini["message"].'</div>';
+}
+
 
 function sendMail($token)
 {
@@ -20,7 +71,7 @@ function sendMail($token)
     global $p;
     if ($ini["email_mode"] === "smtp") {
         global $sendSMTPMail;
-    } elseif ($ini["email_mode"] === "smtp") {
+    } elseif ($ini["email_mode"] === "sendmail") {
         global $emailFrom;
     }
     $selectData = $db_conn->prepare("SELECT " . $p . "_users.email, " . $p . "_users.maxMacs, " . $p . "_macs.mac, " . $p . "_macs.deviceName, " . $p . "_users.id FROM " . $p . "_users
@@ -77,3 +128,14 @@ function sendMail($token)
         }
     }
 }
+
+?>
+
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
